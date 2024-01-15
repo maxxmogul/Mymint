@@ -24,7 +24,7 @@ import "@solana/wallet-adapter-react-ui/styles.css";
 import dynamic from 'next/dynamic';
 
 export default function Home() {
-  // const [network, setNetwork] = useState(WalletAdapterNetwork.Mainnet);
+  // const [network, setNetwork] = useState(WalletAdapterNetwork.Devnet);
 
   // console.log("network", network)
 
@@ -53,7 +53,7 @@ export default function Home() {
   //       setNetwork(WalletAdapterNetwork.Testnet);
   //       break;
   //     default:
-  //       setNetwork(WalletAdapterNetwork.Mainnet);
+  //       setNetwork(WalletAdapterNetwork.Devnet);
   //       break;
   //   }
   // };
