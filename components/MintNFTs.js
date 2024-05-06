@@ -338,38 +338,42 @@ export const MintNFTs = ({ onClusterChange }) => {
     )();
   }
 
-  const onClick = async () => {
-    try {
-    setIsLoading(true)
+const onClick = async () => {
+  try {
+    if (!wallet.connected) {
+      setFormMessage("Please connect your wallet first.");
+      return;
+    }
 
-    // Here the actual mint happens. Depending on the guards that you are using you have to run some pre validation beforehand 
+    setIsLoading(true);
+
+    // Here the actual mint happens. Depending on the guards that you are using you have to run some pre validation beforehand
     // Read more: https://docs.metaplex.com/programs/candy-machine/minting#minting-with-pre-validation
     const { nft } = await metaplex.candyMachines().mint({
       candyMachine,
       collectionUpdateAuthority: candyMachine.authorityAddress,
     });
 
-    setIsLoading(false)
-    setFormMessage("Minted successfully!")
+    setIsLoading(false);
+    setFormMessage("Minted successfully!");
     setNft(nft);
-
   } catch (e) {
-    const msg = fromTxError(e)
+    const msg = fromTxError(e);
 
     if (msg) {
-      setFormMessage(msg.message)
+      setFormMessage(msg.message);
     } else {
-      const msg = e.message || e.toString()
-      setFormMessage(msg)
+      const msg = e.message || e.toString();
+      setFormMessage(msg);
     }
   } finally {
-    setIsLoading(false)
+    setIsLoading(false);
 
     setTimeout(() => {
-      setFormMessage(null)
-    }, 5000)
+      setFormMessage(null);
+    }, 5000);
   }
-  };
+};
 
 
 
