@@ -416,6 +416,32 @@ export const MintNFTs = ({ onClusterChange }) => {
       </div> */}
 
 <main
+
+style={{
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    padding: "96px 0",
+  }}
+>
+  {/* Select Wallet dropdown */}
+  <div style={{ marginBottom: "32px" }}>
+    <select onChange={onClusterChange} className={styles.dropdown}>
+      <option value="devnet">Devnet</option>
+      <option value="mainnet">Mainnet</option>
+      <option value="testnet">Testnet</option>
+    </select>
+  </div>
+
+  {/* Image */}
+  <div style={{ textAlign: "center" }}>
+    <img
+      style={{ maxWidth: "396px", borderRadius: "8px" }}
+      src="https://ibb.co/82BnHhy"
+      alt="SOLYBIRD"
+    />
+  </div>
+
         style={{
           display: "flex",
           flexDirection: "column",
