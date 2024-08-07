@@ -467,7 +467,7 @@ export const MintNFTs = ({ onClusterChange }) => {
               >
                 <span>Public</span>
                 {/* <b>{cost}</b> */}
-                <b>1 PALM</b> 
+                <b>0.01 SOL</b> 
               </div>
               <div
                 style={{
