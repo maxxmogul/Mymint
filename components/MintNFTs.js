@@ -1,101 +1,22 @@
 import styles from "../styles/Home.module.css";
 import { useMetaplex } from "./useMetaplex";
-import { useEffect, useState } from "react";
-import { useConnection, useWallet } from "@solana/wallet-adapter-react";
-import { WalletMultiButton } from "@solana/wallet-adapter-react-ui"
-
-import {
-  CandyMachine,
-  Metaplex,
-  Nft,
-  NftWithToken,
-  // PublicKey,
-  Sft,
-  SftWithToken,
-  walletAdapterIdentity,
-} from "@metaplex-foundation/js"
-
+import { useState } from "react";
+import { useWallet } from "@solana/wallet-adapter-react";
 import { PublicKey } from "@solana/web3.js";
-// import { fromTxError } from "@/utils/errors"
-
-import { errorFromCode } from "@metaplex-foundation/mpl-candy-guard"
-
-function fromTxError(err) {
-  const match = /custom program error: (\w+)/.exec(err + "")
-
-  if (match === null) {
-    return null
-  }
-
-  const [codeRaw] = match.slice(1)
-
-  let errorCode
-  try {
-    errorCode = parseInt(codeRaw, 16)
-  } catch (parseErr) {
-    return null
-  }
-
-  return errorFromCode(errorCode)
-}
-
 
 export const MintNFTs = ({ onClusterChange }) => {
-  // const { metaplex } = useMetaplex();
+  const { metaplex } = useMetaplex();
   const wallet = useWallet();
-  const { connection } = useConnection()
 
   const [nft, setNft] = useState(null);
 
-  const [disableMint, setDisableMint] = useState(false);
-
-
-  const [metaplex, setMetaplex] = useState(null)
-  const [candyMachine, setCandyMachine] = useState(null)
-
-
-  const [collection, setCollection] = useState(null)
-
-  const [isLoading, setIsLoading] = useState(false)
-  const [formMessage, setFormMessage] = useState(null)
-
-
+  const [disableMint, setDisableMint] = useState(true);
 
   const candyMachineAddress = new PublicKey(
     process.env.NEXT_PUBLIC_CANDY_MACHINE_ID
   );
-  // let candyMachine;
+  let candyMachine;
   let walletBalance;
-
-
-
-  useEffect(() => {
-    ;(async () => {
-      if (wallet && connection && !collection && !candyMachine) {
-        if (!process.env.NEXT_PUBLIC_CANDY_MACHINE_ID) {
-          throw new Error("Please provide a candy machine id")
-        }
-        const metaplex = new Metaplex(connection).use(
-          walletAdapterIdentity(wallet)
-        )
-        setMetaplex(metaplex)
-
-        const candyMachine = await metaplex.candyMachines().findByAddress({
-          address: new PublicKey(process.env.NEXT_PUBLIC_CANDY_MACHINE_ID),
-        })
-
-        setCandyMachine(candyMachine)
-
-        const collection = await metaplex
-          .nfts()
-          .findByMint({ mintAddress: candyMachine.collectionMintAddress })
-
-        setCollection(collection)
-
-        console.log(collection)
-      }
-    })()
-  }, [wallet, collection, candyMachine])
 
   const addListener = async () => {
     // add a listener to monitor changes to the candy guard
@@ -339,9 +260,6 @@ export const MintNFTs = ({ onClusterChange }) => {
   }
 
   const onClick = async () => {
-    try {
-    setIsLoading(true)
-
     // Here the actual mint happens. Depending on the guards that you are using you have to run some pre validation beforehand 
     // Read more: https://docs.metaplex.com/programs/candy-machine/minting#minting-with-pre-validation
     const { nft } = await metaplex.candyMachines().mint({
@@ -349,38 +267,8 @@ export const MintNFTs = ({ onClusterChange }) => {
       collectionUpdateAuthority: candyMachine.authorityAddress,
     });
 
-    setIsLoading(false)
-    setFormMessage("Minted successfully!")
     setNft(nft);
-
-  } catch (e) {
-    const msg = fromTxError(e)
-
-    if (msg) {
-      setFormMessage(msg.message)
-    } else {
-      const msg = e.message || e.toString()
-      setFormMessage(msg)
-    }
-  } finally {
-    setIsLoading(false)
-
-    setTimeout(() => {
-      setFormMessage(null)
-    }, 5000)
-  }
   };
-
-
-
-  const cost = candyMachine
-  ? candyMachine.candyGuard?.guards.solPayment
-    ? Number(candyMachine.candyGuard?.guards.solPayment?.amount.basisPoints) /
-        1e9 +
-      " SOL"
-    : "Free mint"
-  : "..."
-
 
   return (
     <div>
